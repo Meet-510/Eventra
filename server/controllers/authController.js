@@ -6,11 +6,11 @@ const jwt = require('jsonwebtoken');
 
 //Register user
 
-const generatetoken = (id, role)=>{
-    return jwt.sign({id,role}),
-    process.env.JWT_SECRET,
-    {expiresIn:'7d'}
-}
+const generatetoken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+        expiresIn: '7d'
+    });
+};
 
 exports.registerUser = async (req,res) => {
     const {name, email, password} = req.body;
@@ -23,7 +23,13 @@ exports.registerUser = async (req,res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     try{
-        const user = new User.create({name,email,password : hashedPassword, roler: 'user',isVerified: false});
+        const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    role: 'user',
+    isVerified: false
+});
         // await user.save();
         // res.status(201).json({message:"user registered successfully"});
 
@@ -81,6 +87,7 @@ exports.loginUser = async (req, res) => {
 
 
     });
+}
 
     //verify OTP
     exports.verifyOtp = async (req,res) =>{
@@ -91,9 +98,17 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({error:"Invalid or expired OTP"});
 
         }
-        await User.findOneAndUpdate({email}, {isVerified: true});
+        const user = await User.findOneAndUpdate({email}, {isVerified: true});
         await OTP.deleteMany({email, action:'account_verification'});
-        res.json({message:"Account verified successfully. You can login now"});
+        res.json({
+            message: "Account verified successfully. You can now log in.",
+            _id: user._id,
+            name: user.name,
+            email:user.email,
+            role:user.role,
+            token:generatetoken(user._id, user.role)
+        });
+
+        
     
 };
- 
