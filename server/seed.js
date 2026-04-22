@@ -31,6 +31,7 @@ const events = [
         ticketPrice: 0,
         image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87'
     },
+   
     {
         title: 'Neon Nights EDM Festival',
         description: 'EDM, techno, and insane light shows.',
