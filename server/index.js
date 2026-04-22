@@ -7,13 +7,10 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? true  // Allow same origin in production
-    : '*',   // Allow all in development
+  origin: process.env.NODE_ENV === 'production' ? true : '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -34,24 +31,20 @@ app.use('/api/bookings', bookingRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-  });
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.error('MongoDB connection error:', error));
 
-// ✅ Serve frontend (Vite build)
+// Serve frontend (Vite build)
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // ✅ SAFE fallback (no wildcard crash)
+  // SAFE fallback (no wildcard crash)
   app.use((req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
   });
 }
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// 🔥 FINAL FIX (PORT BINDING)
+app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
