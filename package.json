@@ -4,8 +4,11 @@
   "description": "A full stack MERN event booking platform with secure authentication, OTP-based booking verification, role-based access control, and an admin dashboard for managing events, bookings, and analytics.",
   "main": "index.js",
   "scripts": {
-    "build":"npm install --prefix server && npm install --prefix client && npm run build --prefix client",
-    "start": "npm run start --prefix server"
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "server": "npm start --prefix server",
+    "client": "npm run dev --prefix client"
   },
   "repository": {
     "type": "git",
