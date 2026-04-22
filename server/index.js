@@ -24,15 +24,19 @@ app.use('/api/bookings', bookingRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('MongoDB connection error:', error));
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
 
 // ✅ Serve frontend (Vite build)
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // FIXED wildcard route (works with Node 24)
-  app.get('/:path(*)', (req, res) => {
+  // ✅ SAFE fallback (no wildcard crash)
+  app.use((req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
   });
 }
