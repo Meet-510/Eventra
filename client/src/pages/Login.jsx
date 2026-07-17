@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import AuthCard, { FieldLabel, SubmitButton } from '../components/AuthCard';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -40,38 +41,38 @@ const Login = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h2>
-                <p className="text-gray-500">Sign in to your Eventra account</p>
-            </div>
-
-            {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-center shadow-inner border border-red-100">{error}</div>}
-
+        <AuthCard
+            title="Welcome Back"
+            subtitle="Sign in to your Eventra account"
+            error={error}
+            footer={
+                <>Don't have an account? <Link to="/register" className="font-bold text-white hover:text-iris-300 transition-colors">Sign up</Link></>
+            }
+        >
             <form onSubmit={handleSubmit} className="space-y-6">
                 {!showOTP ? (
                     <>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                            <FieldLabel>Email Address</FieldLabel>
                             <input
                                 type="email"
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 focus:border-gray-700 transition shadow-sm"
+                                className="field"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            <FieldLabel>Password</FieldLabel>
                             <input
                                 type="password"
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 focus:border-gray-700 transition shadow-sm"
+                                className="field"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <div className="text-right mt-2">
-                                <Link to="/forgot-password" className="text-sm text-gray-600 font-semibold hover:text-gray-900 hover:underline">
+                            <div className="mt-2.5 text-right">
+                                <Link to="/forgot-password" className="text-sm font-semibold text-zinc-500 hover:text-iris-300 transition-colors">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -79,31 +80,23 @@ const Login = () => {
                     </>
                 ) : (
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Verification Code (OTP)</label>
+                        <FieldLabel>Verification Code (OTP)</FieldLabel>
                         <input
                             type="text"
                             required
                             placeholder="6-digit code"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 transition shadow-sm font-bold tracking-widest text-center text-lg"
+                            className="field text-center text-lg font-bold tracking-[0.4em]"
                             value={otp}
                             onChange={(e) => setOtp(e.target.value)}
                             maxLength="6"
                         />
                     </div>
                 )}
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black focus:ring-4 focus:ring-gray-200 transition shadow-md"
-                >
-                    {loading ? 'Processing...' : (showOTP ? 'Verify OTP & Log In' : 'Sign In')}
-                </button>
+                <SubmitButton loading={loading}>
+                    {showOTP ? 'Verify OTP & Log In' : 'Sign In'}
+                </SubmitButton>
             </form>
-
-            <p className="text-center mt-8 text-gray-600">
-                Don't have an account? <Link to="/register" className="text-gray-900 font-bold hover:underline">Sign up</Link>
-            </p>
-        </div>
+        </AuthCard>
     );
 };
 

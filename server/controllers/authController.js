@@ -109,7 +109,10 @@ exports.forgotPassword = async (req, res) => {
             { expiresIn: '15m' }
         );
 
+        // Origin header points to whatever frontend made the request
+        // (http://localhost:5173 in dev, the Render URL in production)
         const baseUrl = process.env.CLIENT_URL
+            || req.headers.origin
             || `${req.headers['x-forwarded-proto'] || req.protocol}://${req.get('host')}`;
         const resetLink = `${baseUrl}/reset-password/${user._id}/${token}`;
 
@@ -117,6 +120,7 @@ exports.forgotPassword = async (req, res) => {
 
         res.json({ message: genericMessage });
     } catch (error) {
+        console.error('Forgot password error:', error.message);
         res.status(500).json({ error: 'Could not send reset email. Please try again later.' });
     }
 };
