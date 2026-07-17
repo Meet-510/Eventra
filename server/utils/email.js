@@ -59,4 +59,31 @@ const sendOTPEmail = async (userEmail, otp, type) => {
     }
 };
 
-module.exports = { sendBookingEmail, sendOTPEmail };
+const sendPasswordResetEmail = async (userEmail, userName, resetLink) => {
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: 'Reset your Eventra password',
+            html: `
+                <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+                    <h2 style="color: #111;">Reset your Eventra password</h2>
+                    <p style="color: #555; font-size: 16px;">Hi ${userName}, we received a request to reset your password. Click the button below to choose a new one.</p>
+                    <a href="${resetLink}" style="display: inline-block; margin: 20px auto; padding: 12px 30px; font-size: 16px; font-weight: bold; color: #fff; background: #111; text-decoration: none; border-radius: 8px;">
+                        Reset Password
+                    </a>
+                    <p style="color: #555; font-size: 14px;">Or copy this link into your browser:</p>
+                    <p style="color: #555; font-size: 12px; word-break: break-all;">${resetLink}</p>
+                    <p style="color: #999; font-size: 12px;">This link expires in 15 minutes and can only be used once. If you didn't request this, please ignore this email — your password will stay unchanged.</p>
+                </div>
+            `
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('Password reset email sent to', userEmail);
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        throw error;
+    }
+};
+
+module.exports = { sendBookingEmail, sendOTPEmail, sendPasswordResetEmail };
