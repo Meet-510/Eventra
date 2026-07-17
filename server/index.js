@@ -29,6 +29,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 
+// Health check (used to verify deploys and keep the free instance awake)
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
@@ -44,7 +52,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// 🔥 FINAL FIX (PORT BINDING)
-app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
